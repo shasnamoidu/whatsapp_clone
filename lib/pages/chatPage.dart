@@ -1,0 +1,62 @@
+import 'package:flutter/material.dart';
+import 'package:whatsapp_clone/models/chat_Model.dart';
+import 'package:whatsapp_clone/widgets/chat_tile.dart';
+
+class ChatPage extends StatelessWidget {
+  ChatPage({super.key});
+  List<Chat> chatList = [
+    Chat(
+        avatar:
+            "https://static.toiimg.com/thumb/msid-85372696,width-1280,resizemode-4/85372696.jpg",
+        nAme: "shasna",
+        isGroup: false,
+        updatedAt: "9:00 PM",
+        message: "hello",
+        status: "online"
+        ),
+    Chat(
+        avatar: "",
+        nAme: "jingalala",
+        isGroup: true,
+        updatedAt: "10:45 AM",
+        message: "Good morning",
+        status: "online"
+        ),
+        
+    Chat(
+        avatar: "",
+        nAme: "aysha",
+        isGroup: false,
+        updatedAt: "1:00 AM",
+        message: "thanks",
+        status: "online"
+        ),
+        
+        
+    Chat(
+        avatar:
+            "data:image/png;base64,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",
+        nAme: "family",
+        isGroup: true,
+        updatedAt: "7:38 PM",
+        message: "Sugalle",
+        status: "offline"
+        )
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: ListView.builder(
+        itemCount: chatList.length,
+        itemBuilder: (context, index) {
+          return ChatTile(chatData: chatList[index]);
+        },
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {},
+        child: Icon(Icons.chat),
+      ),
+    );
+  }
+}
