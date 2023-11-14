@@ -1,5 +1,9 @@
+import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:whatsapp_clone/models/chat_Model.dart';
+import 'package:whatsapp_clone/models/singleChatMode.dart';
+import 'package:whatsapp_clone/widgets/chatBubble.dart';
+import 'package:whatsapp_clone/widgets/utilityWidget.dart';
 
 class ChatDetails extends StatefulWidget {
   ChatDetails({super.key, required this.chatData});
@@ -10,6 +14,25 @@ class ChatDetails extends StatefulWidget {
 }
 
 class _ChatDetailsState extends State<ChatDetails> {
+  List<SingleChat> messageList = [
+    SingleChat(
+        isSend: true, isReaded: true, message: 'hello', sendAt: '9:45 AM'),
+    SingleChat(
+        isSend: true,
+        isReaded: false,
+        message: 'how are you',
+        sendAt: '12:35 PM'),
+    SingleChat(
+        isSend: false,
+        isReaded: false,
+        message: 'i am fine',
+        sendAt: '2:12 AM'),
+    SingleChat(
+        isSend: true, isReaded: true, message: 'welcome', sendAt: '10:35 AM'),
+  ];
+  bool showSend = false;
+  bool showEmoji = false;
+  TextEditingController _msgController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -81,7 +104,16 @@ class _ChatDetailsState extends State<ChatDetails> {
           Container(
             height: MediaQuery.of(context).size.height,
             width: MediaQuery.of(context).size.width,
-            child: Image.asset('assets/images/wtsap_wal.png',fit: BoxFit.cover,),
+            child: Image.asset(
+              'assets/images/wtsap_wal.png',
+              fit: BoxFit.cover,
+            ),
+          ),
+          ListView.builder(
+            itemCount: messageList.length,
+            itemBuilder: (context, index) {
+              return ChatBubble(message: messageList[index]);
+            },
           ),
           Align(
             alignment: Alignment.bottomCenter,
@@ -91,29 +123,178 @@ class _ChatDetailsState extends State<ChatDetails> {
                 Row(
                   children: [
                     Container(
-                      width: MediaQuery.of(context).size.width -70,
-                      decoration: BoxDecoration(color: Colors.white,borderRadius: BorderRadius.circular(25)),
+                      width: MediaQuery.of(context).size.width - 70,
+                      decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(25)),
                       child: TextField(
+                        controller: _msgController,
+                        onChanged: (value) {
+                          if (value.length > 0) {
+                            setState(() {
+                              showSend = true;
+                            });
+                          } else {
+                            setState(() {
+                              showSend = false;
+                            });
+                          }
+                        },
+                        onTap: () {
+                          setState(() {
+                            showEmoji = true;
+                          });
+                        },
                         cursorColor: Colors.teal,
                         style: TextStyle(fontSize: 20),
-                        decoration: InputDecoration(hintText: 'type a message',
-                        border: InputBorder.none),
+                        decoration: InputDecoration(
+                            prefixIcon: IconButton(
+                                onPressed: () {
+                                  if (showEmoji) {
+                                    FocusScope.of(context).unfocus();
+                                  }
+                                  setState(() {
+                                    showEmoji = !showEmoji;
+                                  });
+                                },
+                                icon: (showEmoji)
+                                    ? Icon(Icons.emoji_emotions_outlined)
+                                    : Icon(Icons.keyboard)),
+                            hintText: 'type a message',
+                            suffixIcon: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                IconButton(
+                                    onPressed: () => showModalBottomSheet(
+                                          context: context,
+                                          builder: (context) => menu(),
+                                        ),
+                                    icon: Icon(Icons.attach_file)),
+                                UtilityWidget().widthSpacer(30),
+                                Icon(Icons.currency_rupee_rounded),
+                                UtilityWidget().widthSpacer(30),
+                                Icon(Icons.camera_alt),
+                                UtilityWidget().widthSpacer(30),
+                              ],
+                            ),
+                            border: InputBorder.none),
                       ),
                     ),
-                    Padding(padding: EdgeInsets.symmetric(vertical: 5,horizontal: 5),
-                    child: InkWell(
-                      child: CircleAvatar(
-                        radius: 25,
-                        child:
-                    
-                         Icon(Icons.mic,)
+                    Padding(
+                      padding: EdgeInsets.symmetric(vertical: 5, horizontal: 5),
+                      child: InkWell(
+                        onTap: () {
+                          setState(() {
+                            messageList.add(SingleChat(
+                                isSend: true,
+                                isReaded: false,
+                                message: _msgController.text,
+                                sendAt: '10:25 AM'));
+                          });
+                          _msgController.clear();
+                        },
+                        child: CircleAvatar(
+                            radius: 25,
+                            child: (showSend)
+                                ? Icon(Icons.send)
+                                : Icon(
+                                    Icons.mic,
+                                  )),
                       ),
                     ),
-                    )
                   ],
                 ),
+                Offstage(
+                    offstage: showEmoji,
+                    child: SizedBox(
+                      height: 300,
+                      child: EmojiPicker(
+                        textEditingController: _msgController,
+                        onEmojiSelected: (category, emoji) {
+                          setState(() {
+                            showSend = true;
+                          });
+                        },
+                      ),
+                    )),
               ],
             ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget iconWidget(Icon icon, Color color, String text, Function fun) {
+    return GestureDetector(
+      onTap: () {
+        fun();
+      },
+      child: Column(
+        children: [
+          CircleAvatar(
+            backgroundColor: color,
+            radius: 30,
+            child: icon,
+          ),
+          SizedBox(height: 10),
+          Text(
+            text,
+            style: TextStyle(
+              fontSize: 20,
+            ),
+          )
+        ],
+      ),
+    );
+  }
+
+  Widget menu() {
+    return Container(
+      height: 350,
+      width: MediaQuery.of(context).size.width ,
+      padding: EdgeInsets.symmetric(horizontal: 50, vertical: 20),
+      child: Column(
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              iconWidget(
+                  Icon(Icons.insert_drive_file), Colors.indigo, 'document',
+                  () {
+                print('Document');
+              }),
+              iconWidget(Icon(Icons.camera_alt),
+                  const Color.fromARGB(255, 181, 63, 63), 'camera', () {
+                print('camera');
+              }),
+              iconWidget(Icon(Icons.insert_photo),
+                  const Color.fromARGB(255, 177, 63, 181), 'Gallery', () {
+                print('Gallery');
+              }),
+            ],
+          ),
+          SizedBox(
+            height: 10,
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              iconWidget(Icon(Icons.headset), Colors.orange, 'Audio', () {
+                print('Audio');
+              }),
+              iconWidget(Icon(Icons.location_pin), Colors.teal, 'Location',
+                  () {
+                print('Location');
+              }),
+              iconWidget(Icon(Icons.contact_phone), Colors.blue, 'contact',
+                  () {
+                print('contact');
+              }),
+            ],
+          ),
+          SizedBox(
+            height: 10,
           ),
         ],
       ),
