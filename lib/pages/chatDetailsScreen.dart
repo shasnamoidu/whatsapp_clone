@@ -253,25 +253,27 @@ class _ChatDetailsState extends State<ChatDetails> {
     return Container(
       height: 350,
       width: MediaQuery.of(context).size.width ,
-      padding: EdgeInsets.symmetric(horizontal: 50, vertical: 20),
+      padding: EdgeInsets.symmetric(horizontal: 50, vertical: 10),
       child: Column(
         children: [
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
               iconWidget(
-                  Icon(Icons.insert_drive_file), Colors.indigo, 'document',
+                  Icon(Icons.insert_drive_file,color: Colors.white,), Colors.indigo, 'document',
                   () {
                 print('Document');
               }),
-              iconWidget(Icon(Icons.camera_alt),
+              iconWidget(Icon(Icons.camera_alt,color: Colors.white,),
                   const Color.fromARGB(255, 181, 63, 63), 'camera', () {
                 print('camera');
               }),
-              iconWidget(Icon(Icons.insert_photo),
+              UtilityWidget().widthSpacer(10),
+              iconWidget(Icon(Icons.insert_photo,color: Colors.white,),
                   const Color.fromARGB(255, 177, 63, 181), 'Gallery', () {
                 print('Gallery');
               }),
+              UtilityWidget().widthSpacer(10)
             ],
           ),
           SizedBox(
@@ -280,21 +282,36 @@ class _ChatDetailsState extends State<ChatDetails> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
-              iconWidget(Icon(Icons.headset), Colors.orange, 'Audio', () {
+              iconWidget(Icon(Icons.headset,color: Colors.white,), Colors.orange, 'Audio', () {
                 print('Audio');
               }),
-              iconWidget(Icon(Icons.location_pin), Colors.teal, 'Location',
+              iconWidget(Icon(Icons.location_pin,color: Colors.white,), Colors.teal, 'Location',
                   () {
                 print('Location');
               }),
-              iconWidget(Icon(Icons.contact_phone), Colors.blue, 'contact',
+              iconWidget(Icon(Icons.payment,color: Colors.white,), Colors.blue, 'Payment',
                   () {
-                print('contact');
+                print('Payment');
               }),
             ],
           ),
           SizedBox(
             height: 10,
+          
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              iconWidget(Icon(Icons.contact_phone,color: Colors.white,), Colors.blue, 'Contact', () {
+                print('Contact');
+              }),
+              
+              iconWidget(Icon(Icons.poll,color: Colors.white,), Colors.green, 'Poll',
+                  () {
+                print('Poll');
+              }),
+              UtilityWidget().widthSpacer(80)
+            ],
           ),
         ],
       ),
